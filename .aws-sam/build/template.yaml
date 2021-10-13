@@ -9,37 +9,42 @@ Globals:
   Function:
     Timeout: 3
 Resources:
-  HelloWorldFunction:
+  ShipYoPants:
     Type: AWS::Serverless::Function
     Properties:
       PackageType: Image
       Architectures:
       - x86_64
       Events:
-        HelloWorld:
+        HelloWorldGet:
           Type: Api
           Properties:
             Path: /hello
             Method: get
-      ImageUri: helloworldfunction:nodejs12.x-v1
+        HelloWorldPost:
+          Type: Api
+          Properties:
+            Path: /hello
+            Method: post
+      ImageUri: shipyopants:nodejs12.x-v1
     Metadata:
       DockerTag: nodejs12.x-v1
-      DockerContext: ./shipyopants/built
+      DockerContext: ./shipyopants
       Dockerfile: Dockerfile
 Outputs:
-  HelloWorldApi:
+  ShipYoPantsApi:
     Description: API Gateway endpoint URL for Prod stage for Hello World function
     Value:
       Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/
-  HelloWorldFunction:
+  ShipYoPantsFunc:
     Description: Hello World Lambda Function ARN
     Value:
       Fn::GetAtt:
-      - HelloWorldFunction
+      - ShipYoPants
       - Arn
-  HelloWorldFunctionIamRole:
+  ShipYoPantsIamRole:
     Description: Implicit IAM Role created for Hello World function
     Value:
       Fn::GetAtt:
-      - HelloWorldFunctionRole
+      - ShipYoPantsRole
       - Arn
