@@ -24,7 +24,7 @@ Resources:
         HelloWorldPost:
           Type: Api
           Properties:
-            Path: /hello
+            Path: /taxesForOrder
             Method: post
       ImageUri: shipyopants:nodejs12.x-v1
     Metadata:
