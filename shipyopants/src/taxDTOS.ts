@@ -1,7 +1,6 @@
 export interface TaxResponse {
     amountToCollect: number;
     rate: number;
-    ay: "AYOOO";
 }
 
 export interface AddressDTO {

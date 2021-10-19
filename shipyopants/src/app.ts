@@ -11,7 +11,7 @@ import * as AWS from "aws-sdk"
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import Taxjar from "taxjar";
 import { TaxParams } from "taxjar/dist/types/paramTypes";
-import { IncomingTaxRequest, TaxResponse } from "./taxDTOS";
+import { AddressDTO, IncomingTaxRequest, TaxResponse } from "./taxDTOS";
 
 const getParameterFromSSM = async (name: string, decrypt: boolean): Promise<string> => {
     const ssm = new AWS.SSM({ region: 'us-east-1' });
@@ -26,25 +26,27 @@ export const lambdaHandler = async (
     event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
     const queries = JSON.stringify(event.queryStringParameters);
-    const taxRequest = JSON.parse(JSON.stringify(event.body));
+    const taxRequest = JSON.parse(event.body);
     console.log(taxRequest);
 
 
+    const toAddress: AddressDTO = {
+        city: taxRequest.toAddress.city,
+        state: taxRequest.toAddress.state,
+        zipCode: taxRequest.toAddress.zipCode,
+        street: taxRequest.toAddress.street,
+        country: taxRequest.toAddress.country
+    }
+    const fromAddress: AddressDTO = {
+        city: taxRequest.fromAddress.city,
+        state: taxRequest.fromAddress.state,
+        zipCode: taxRequest.fromAddress.zipCode,
+        street: taxRequest.fromAddress.street,
+        country: taxRequest.fromAddress.country
+    }
     const incTaxRequest: IncomingTaxRequest = {
-        toAddress: {
-            city: taxRequest.toAddress.city,
-            state: taxRequest.toAddress.state,
-            zipCode: taxRequest.toAddress.zipCode,
-            street: taxRequest.toAddress.street,
-            country: taxRequest.toAddress.country
-        },
-        fromAddres: {
-            city: taxRequest.fromAddres.city,
-            state: taxRequest.fromAddres.state,
-            zipCode: taxRequest.fromAddres.zipCode,
-            street: taxRequest.fromAddres.street,
-            country: taxRequest.fromAddres.country
-        },
+        toAddress: toAddress,
+        fromAddres: fromAddress,
         subtotal: taxRequest.subtotal,
         shippingCost: taxRequest.shippingCost
     }
@@ -74,8 +76,7 @@ export const lambdaHandler = async (
     const result = await taxJarClient.taxForOrder(taxParams);
     const response: TaxResponse = {
         amountToCollect: result.tax.amount_to_collect,
-        rate: result.tax.rate,
-        ay: "AYOOO"
+        rate: result.tax.rate
     }
 
     return {

@@ -34,23 +34,25 @@ const getParameterFromSSM = async (name, decrypt) => {
 };
 const lambdaHandler = async (event) => {
     const queries = JSON.stringify(event.queryStringParameters);
-    const taxRequest = JSON.parse(JSON.stringify(event.body));
+    const taxRequest = JSON.parse(event.body);
     console.log(taxRequest);
+    const toAddress = {
+        city: taxRequest.toAddress.city,
+        state: taxRequest.toAddress.state,
+        zipCode: taxRequest.toAddress.zipCode,
+        street: taxRequest.toAddress.street,
+        country: taxRequest.toAddress.country
+    };
+    const fromAddress = {
+        city: taxRequest.fromAddress.city,
+        state: taxRequest.fromAddress.state,
+        zipCode: taxRequest.fromAddress.zipCode,
+        street: taxRequest.fromAddress.street,
+        country: taxRequest.fromAddress.country
+    };
     const incTaxRequest = {
-        toAddress: {
-            city: taxRequest.toAddress.city,
-            state: taxRequest.toAddress.state,
-            zipCode: taxRequest.toAddress.zipCode,
-            street: taxRequest.toAddress.street,
-            country: taxRequest.toAddress.country
-        },
-        fromAddres: {
-            city: taxRequest.fromAddres.city,
-            state: taxRequest.fromAddres.state,
-            zipCode: taxRequest.fromAddres.zipCode,
-            street: taxRequest.fromAddres.street,
-            country: taxRequest.fromAddres.country
-        },
+        toAddress: toAddress,
+        fromAddres: fromAddress,
         subtotal: taxRequest.subtotal,
         shippingCost: taxRequest.shippingCost
     };
@@ -75,8 +77,7 @@ const lambdaHandler = async (event) => {
     const result = await taxJarClient.taxForOrder(taxParams);
     const response = {
         amountToCollect: result.tax.amount_to_collect,
-        rate: result.tax.rate,
-        ay: "AYOOO"
+        rate: result.tax.rate
     };
     return {
         statusCode: 200,
