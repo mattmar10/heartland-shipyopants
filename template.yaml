@@ -25,7 +25,7 @@ Resources:
         CalculateSalesTax:
           Type: Api
           Properties:
-            Path: /calculate-sales-tax
+            Path: /tax-service/calculate-sales-tax
             Method: post
     Metadata:
       DockerTag: nodejs12.x-v1
