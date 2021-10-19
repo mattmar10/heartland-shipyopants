@@ -8,4 +8,4 @@ s3_prefix = "sam-app"
 region = "us-east-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
-image_repositories = ["ShipYoPants=086267763727.dkr.ecr.us-east-1.amazonaws.com/samapp7427b055/shipyopants3e71219arepo"]
+image_repositories = ["ShipYoPants=104823389718.dkr.ecr.us-east-1.amazonaws.com/samapp7427b055/shipyopants3e71219arepo"]
