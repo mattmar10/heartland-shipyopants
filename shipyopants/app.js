@@ -24,7 +24,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.lambdaHandler = void 0;
 const AWS = __importStar(require("aws-sdk"));
-const axios_1 = __importDefault(require("axios"));
 const taxjar_1 = __importDefault(require("taxjar"));
 const getParameterFromSSM = async (name, decrypt) => {
     const ssm = new AWS.SSM({ region: 'us-east-1' });
@@ -35,39 +34,54 @@ const getParameterFromSSM = async (name, decrypt) => {
 };
 const lambdaHandler = async (event) => {
     const queries = JSON.stringify(event.queryStringParameters);
+    const taxRequest = JSON.parse(JSON.stringify(event.body));
+    console.log(taxRequest);
+    const incTaxRequest = {
+        toAddress: {
+            city: taxRequest.toAddress.city,
+            state: taxRequest.toAddress.state,
+            zipCode: taxRequest.toAddress.zipCode,
+            street: taxRequest.toAddress.street,
+            country: taxRequest.toAddress.country
+        },
+        fromAddres: {
+            city: taxRequest.fromAddres.city,
+            state: taxRequest.fromAddres.state,
+            zipCode: taxRequest.fromAddres.zipCode,
+            street: taxRequest.fromAddres.street,
+            country: taxRequest.fromAddres.country
+        },
+        subtotal: taxRequest.subtotal,
+        shippingCost: taxRequest.shippingCost
+    };
     const taxJarKey = await getParameterFromSSM('TAX_JAR_API_KEY_SB', true);
     const taxJarClient = new taxjar_1.default({
         apiKey: taxJarKey
     });
-    //do stuff here
-    console.log(`tax jar ${taxJarKey}`);
-    const result = await axios_1.default.get('https://swapi.dev/api/planets/1');
-    console.log(JSON.stringify(result.data));
-    console.log(event.httpMethod);
     const taxParams = {
-        from_country: 'US',
-        from_zip: '07001',
-        from_state: 'NJ',
-        from_city: 'Avenel',
-        from_street: '305 W Village Dr',
-        to_country: 'US',
-        to_zip: '73116',
-        to_state: 'OK',
-        to_city: 'Oklahoma City',
-        to_street: '2600 Somerset Pl',
-        amount: 16.50,
-        shipping: 1.5,
+        from_country: incTaxRequest.fromAddres.country,
+        from_zip: incTaxRequest.fromAddres.zipCode,
+        from_state: incTaxRequest.fromAddres.state,
+        from_city: incTaxRequest.fromAddres.city,
+        from_street: incTaxRequest.fromAddres.street,
+        to_country: incTaxRequest.toAddress.country,
+        to_zip: incTaxRequest.toAddress.zipCode,
+        to_state: incTaxRequest.toAddress.state,
+        to_city: incTaxRequest.toAddress.city,
+        to_street: incTaxRequest.toAddress.street,
+        amount: incTaxRequest.subtotal,
+        shipping: incTaxRequest.shippingCost,
     };
-    taxJarClient
-        .taxForOrder(taxParams)
-        .then(res => {
-        console.log(res.tax);
-        console.log(res.tax.amount_to_collect);
-    });
+    const result = await taxJarClient.taxForOrder(taxParams);
+    const response = {
+        amountToCollect: result.tax.amount_to_collect,
+        rate: result.tax.rate,
+        ay: "AYOOO"
+    };
     return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(result.data)
+        body: JSON.stringify(response)
     };
 };
 exports.lambdaHandler = lambdaHandler;

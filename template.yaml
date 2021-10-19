@@ -14,6 +14,10 @@ Resources:
   ShipYoPants:
     Type: AWS::Serverless::Function
     Properties:
+      Policies:
+        - 
+          SSMParameterReadPolicy:
+            ParameterName: TAX_JAR_API_KEY_SB
       PackageType: Image
       Architectures:
         - x86_64
@@ -21,8 +25,8 @@ Resources:
         HelloWorldGet:
           Type: Api
           Properties:
-            Path: /hello
-            Method: get
+            Path: /taxrequest
+            Method: post
         HelloWorldPost:
           Type: Api
           Properties:
