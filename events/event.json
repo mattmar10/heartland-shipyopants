@@ -1,5 +1,5 @@
 {
-  "body": "{\"message\": \"bye world\"}",
+  "body": "{\n    \"toAddress\": {\n        \"zipCode\": \"73116\",\n        \"state\": \"OK\",\n        \"city\": \"OKC\",\n        \"street\": \"2600 Somerset Pl\",\n        \"country\": \"US\"\n    },\n    \"fromAddress\": {\n        \"zipCode\": \"07001\",\n        \"state\": \"NJ\",\n        \"city\": \"Avenel\",\n        \"street\": \"305 W Village Dr\",\n        \"country\": \"US\"\n    },\n    \"subtotal\": 106,\n    \"shippingCost\": 1.5\n}",
   "resource": "/{proxy+}",
   "path": "/path/to/resource",
   "httpMethod": "POST",

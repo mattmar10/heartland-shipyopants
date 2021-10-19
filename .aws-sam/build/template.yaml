@@ -12,19 +12,17 @@ Resources:
   ShipYoPants:
     Type: AWS::Serverless::Function
     Properties:
+      Policies:
+      - SSMParameterReadPolicy:
+          ParameterName: TAX_JAR_API_KEY_SB
       PackageType: Image
       Architectures:
       - x86_64
       Events:
-        HelloWorldGet:
+        CalculateSalesTax:
           Type: Api
           Properties:
-            Path: /hello
-            Method: get
-        HelloWorldPost:
-          Type: Api
-          Properties:
-            Path: /hello
+            Path: /calculate-sales-tax
             Method: post
       ImageUri: shipyopants:nodejs12.x-v1
     Metadata:
@@ -35,7 +33,7 @@ Outputs:
   ShipYoPantsApi:
     Description: API Gateway endpoint URL for Prod stage for Hello World function
     Value:
-      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/tax-service/
   ShipYoPantsFunc:
     Description: Hello World Lambda Function ARN
     Value:
