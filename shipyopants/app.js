@@ -25,42 +25,50 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.lambdaHandler = void 0;
 const AWS = __importStar(require("aws-sdk"));
 const taxjar_1 = __importDefault(require("taxjar"));
+const parseIncomingRequest = (event) => {
+    try {
+        const taxRequest = JSON.parse(event.body);
+        const toAddress = {
+            city: taxRequest.toAddress.city,
+            state: taxRequest.toAddress.state,
+            zipCode: taxRequest.toAddress.zipCode,
+            street: taxRequest.toAddress.street,
+            country: taxRequest.toAddress.country,
+        };
+        const fromAddress = {
+            city: taxRequest.fromAddress.city,
+            state: taxRequest.fromAddress.state,
+            zipCode: taxRequest.fromAddress.zipCode,
+            street: taxRequest.fromAddress.street,
+            country: taxRequest.fromAddress.country,
+        };
+        const incTaxRequest = {
+            toAddress: toAddress,
+            fromAddres: fromAddress,
+            subtotal: taxRequest.subtotal,
+            shippingCost: taxRequest.shippingCost,
+        };
+        return incTaxRequest;
+    }
+    catch (err) {
+        console.error("unable to parse incoming event");
+        //gross... but easiest approach to adhere to the shape of the error type being thrown by tax jar.
+        //This is why we have eithers.
+        throw {
+            detail: "unable to parse incoming event",
+            status: 400,
+        };
+    }
+};
 const getParameterFromSSM = async (name, decrypt) => {
-    const ssm = new AWS.SSM({ region: 'us-east-1' });
+    const ssm = new AWS.SSM({ region: "us-east-1" });
     const result = await ssm
         .getParameter({ Name: name, WithDecryption: decrypt })
         .promise();
     return result.Parameter.Value;
 };
-const lambdaHandler = async (event) => {
-    const queries = JSON.stringify(event.queryStringParameters);
-    const taxRequest = JSON.parse(event.body);
-    console.log(taxRequest);
-    const toAddress = {
-        city: taxRequest.toAddress.city,
-        state: taxRequest.toAddress.state,
-        zipCode: taxRequest.toAddress.zipCode,
-        street: taxRequest.toAddress.street,
-        country: taxRequest.toAddress.country
-    };
-    const fromAddress = {
-        city: taxRequest.fromAddress.city,
-        state: taxRequest.fromAddress.state,
-        zipCode: taxRequest.fromAddress.zipCode,
-        street: taxRequest.fromAddress.street,
-        country: taxRequest.fromAddress.country
-    };
-    const incTaxRequest = {
-        toAddress: toAddress,
-        fromAddres: fromAddress,
-        subtotal: taxRequest.subtotal,
-        shippingCost: taxRequest.shippingCost
-    };
-    const taxJarKey = await getParameterFromSSM('TAX_JAR_API_KEY_SB', true);
-    const taxJarClient = new taxjar_1.default({
-        apiKey: taxJarKey
-    });
-    const taxParams = {
+const buildTaxParams = (incTaxRequest) => {
+    return {
         from_country: incTaxRequest.fromAddres.country,
         from_zip: incTaxRequest.fromAddres.zipCode,
         from_state: incTaxRequest.fromAddres.state,
@@ -74,16 +82,37 @@ const lambdaHandler = async (event) => {
         amount: incTaxRequest.subtotal,
         shipping: incTaxRequest.shippingCost,
     };
-    const result = await taxJarClient.taxForOrder(taxParams);
-    const response = {
-        amountToCollect: result.tax.amount_to_collect,
-        rate: result.tax.rate
-    };
-    return {
-        statusCode: 200,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(response)
-    };
+};
+const lambdaHandler = async (event) => {
+    const taxJarKey = await getParameterFromSSM("TAX_JAR_API_KEY_SB", true);
+    const taxJarClient = new taxjar_1.default({
+        apiKey: taxJarKey,
+    });
+    try {
+        const incTaxRequest = parseIncomingRequest(event);
+        const taxParams = buildTaxParams(incTaxRequest);
+        const result = await taxJarClient.taxForOrder(taxParams);
+        const response = {
+            amountToCollect: result.tax.amount_to_collect,
+            rate: result.tax.rate,
+            fromAddress: incTaxRequest.fromAddres,
+            toAddress: incTaxRequest.toAddress,
+        };
+        return {
+            statusCode: 200,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(response),
+        };
+    }
+    catch (err) {
+        const errorMsg = `error fetching taxes: ${err.detail}`;
+        console.error(errorMsg);
+        return {
+            statusCode: err.status,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ error: errorMsg }),
+        };
+    }
 };
 exports.lambdaHandler = lambdaHandler;
 //# sourceMappingURL=app.js.map
