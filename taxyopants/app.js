@@ -85,6 +85,7 @@ const buildTaxParams = (incTaxRequest) => {
 };
 const lambdaHandler = async (event) => {
     const taxJarKey = await getParameterFromSSM("TAX_JAR_API_KEY_SB", true);
+    console.log(`key ${taxJarKey}`);
     const taxJarClient = new taxjar_1.default({
         apiKey: taxJarKey,
     });
