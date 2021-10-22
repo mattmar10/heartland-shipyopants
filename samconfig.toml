@@ -3,9 +3,9 @@ version = 0.1
 [default.deploy]
 [default.deploy.parameters]
 stack_name = "tax-yo-pants"
-s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-92huu4abc6s5"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-bto2jbqv73is"
 s3_prefix = "tax-yo-pants"
 region = "us-east-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
-image_repositories = ["ShipYoPants=104823389718.dkr.ecr.us-east-1.amazonaws.com/samapp7427b055/shipyopants3e71219arepo"]
+image_repositories = ["ShipYoPants=104823389718.dkr.ecr.us-east-1.amazonaws.com/samapp7427b055/shipyopants3e71219arepo", "TaxYoPants=464570369687.dkr.ecr.us-east-1.amazonaws.com/taxyopants2577b35f/taxyopants8251c9derepo"]

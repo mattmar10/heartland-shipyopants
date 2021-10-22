@@ -84,6 +84,8 @@ export const lambdaHandler = async (
     true
   );
 
+  console.log(`key ${taxJarKey}`);
+
   const taxJarClient = new Taxjar({
     apiKey: taxJarKey,
   });

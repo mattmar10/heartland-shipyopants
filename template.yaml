@@ -1,9 +1,9 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  heartland-shipyopants
+  heartland-taxyopants
 
-  Sample SAM Template for heartland-shipyopants
+   SAM Template for heartland-taxyopants
   
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -11,7 +11,7 @@ Globals:
     Timeout: 3
 
 Resources:
-  ShipYoPants:
+  TaxYoPants:
     Type: AWS::Serverless::Function
     Properties:
       Policies:
@@ -29,7 +29,7 @@ Resources:
             Method: post
     Metadata:
       DockerTag: nodejs12.x-v1
-      DockerContext: ./shipyopants
+      DockerContext: ./taxyopants
       Dockerfile: Dockerfile
 
 
@@ -37,12 +37,12 @@ Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  ShipYoPantsApi:
+  TaxYoPantsApi:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
-  ShipYoPantsFunc:
+  TaxYoPantsFunc:
     Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt ShipYoPants.Arn
-  ShipYoPantsIamRole:
+    Value: !GetAtt TaxYoPants.Arn
+  TaxYoPantsIamRole:
     Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt ShipYoPantsRole.Arn
+    Value: !GetAtt TaxYoPantsRole.Arn
