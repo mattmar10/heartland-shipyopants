@@ -1,15 +1,11 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: 'heartland-shipyopants
-
-  Sample SAM Template for heartland-shipyopants
-
-  '
+Description: "heartland-taxyopants\n\n SAM Template for heartland-taxyopants\n"
 Globals:
   Function:
     Timeout: 3
 Resources:
-  ShipYoPants:
+  TaxYoPants:
     Type: AWS::Serverless::Function
     Properties:
       Policies:
@@ -24,25 +20,25 @@ Resources:
           Properties:
             Path: /tax-service/calculate-sales-tax
             Method: post
-      ImageUri: shipyopants:nodejs12.x-v1
+      ImageUri: taxyopants:nodejs12.x-v1
     Metadata:
       DockerTag: nodejs12.x-v1
-      DockerContext: ./shipyopants
+      DockerContext: ./taxyopants
       Dockerfile: Dockerfile
 Outputs:
-  ShipYoPantsApi:
+  TaxYoPantsApi:
     Description: API Gateway endpoint URL for Prod stage for Hello World function
     Value:
       Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/
-  ShipYoPantsFunc:
+  TaxYoPantsFunc:
     Description: Hello World Lambda Function ARN
     Value:
       Fn::GetAtt:
-      - ShipYoPants
+      - TaxYoPants
       - Arn
-  ShipYoPantsIamRole:
+  TaxYoPantsIamRole:
     Description: Implicit IAM Role created for Hello World function
     Value:
       Fn::GetAtt:
-      - ShipYoPantsRole
+      - TaxYoPantsRole
       - Arn
