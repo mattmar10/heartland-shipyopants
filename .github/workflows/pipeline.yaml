@@ -10,13 +10,13 @@ env:
   PIPELINE_USER_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   PIPELINE_USER_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   SAM_TEMPLATE: template.yaml
-  TESTING_STACK_NAME: taxyopants-dev
+  TESTING_STACK_NAME: heartland-taxyopants
   TESTING_PIPELINE_EXECUTION_ROLE: arn:aws:iam::464570369687:role/aws-sam-cli-managed-dev-pipe-PipelineExecutionRole-192K5N6WIO1GM
   TESTING_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::464570369687:role/aws-sam-cli-managed-dev-p-CloudFormationExecutionR-1HLJRREJ5I1HA
   TESTING_ARTIFACTS_BUCKET: aws-sam-cli-managed-dev-pipeline-artifactsbucket-wggcnh1fug13
   TESTING_IMAGE_REPOSITORY: 464570369687.dkr.ecr.us-east-1.amazonaws.com/aws-sam-cli-managed-dev-pipeline-resources-imagerepository-yj0fj7qyxxjq
   TESTING_REGION: us-east-1
-  PROD_STACK_NAME: taxyopants-prod
+  PROD_STACK_NAME: heartland-taxyopants-prod
   PROD_PIPELINE_EXECUTION_ROLE: arn:aws:iam::464570369687:role/aws-sam-cli-managed-prod-pip-PipelineExecutionRole-1T0NPPMBO54RI
   PROD_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::464570369687:role/aws-sam-cli-managed-prod-CloudFormationExecutionR-1BNZUE3XTXNH3
   PROD_ARTIFACTS_BUCKET: aws-sam-cli-managed-prod-pipeline-artifactsbucket-13apv8yqfyfe4
